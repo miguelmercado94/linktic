@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres-productos:
+    image: postgres:15
+    container_name: postgres_productos
+    environment:
+      POSTGRES_DB: productos_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_productos:/var/lib/postgresql/data
+
+  postgres-inventario:
+    image: postgres:15
+    container_name: postgres_inventario
+    environment:
+      POSTGRES_DB: inventario_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_inventario:/var/lib/postgresql/data
+
+  productos-service:
+    build:
+      context: ./productos-service
+      dockerfile: Dockerfile-productos
+    depends_on:
+      - postgres-productos
+    environment:
+      PRODUCTOS_DB_URL: r2dbc:postgresql://postgres-productos:5432/productos_db
+      PRODUCTOS_DB_USER: admin
+      PRODUCTOS_DB_PASS: admin123
+    ports:
+      - "8080:8080"
+
+  inventario-service:
+    build:
+      context: ./inventario-service
+      dockerfile: Dockerfile-inventario
+    depends_on:
+      - postgres-inventario
+      - productos-service
+    environment:
+      INVENTARIO_DB_URL: r2dbc:postgresql://postgres-inventario:5432/inventario_db
+      INVENTARIO_DB_USER: admin
+      INVENTARIO_DB_PASS: admin123
+      PRODUCTOS_SERVICE_URL: http://productos-service:8080
+    ports:
+      - "8081:8081"
+
+volumes:
+  pgdata_productos:
+  pgdata_inventario:
+
