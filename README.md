@@ -1,0 +1,2 @@
+# linktic
+prueba tecnica linktic
