@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: productos-service
+
+  r2dbc:
+    url: ${PRODUCTOS_DB_URL}
+    username: ${PRODUCTOS_DB_USER}
+    password: ${PRODUCTOS_DB_PASS}
+
+  main:
+    allow-bean-definition-overriding: true
+
+  sql:
+    init:
+      mode: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
